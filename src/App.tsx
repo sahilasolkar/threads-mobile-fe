@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import Feed from "./pages/Feed";
+import Search from "./pages/Search";
+import Post from "./pages/Post";
+import Likes from "./pages/Likes";
+import Profile from "./pages/Profile";
+import FixedBottomNavigation from "./shared/FixedBottomNavigation";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Landing from "./pages/Landing";
 
 function App() {
+  const blacklistedRoutes = ["/signup", "/login", "/"];
+  const path = window.location.pathname;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {!blacklistedRoutes.includes(path) && <FixedBottomNavigation />}
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/post" element={<Post />} />
+        <Route path="/likes" element={<Likes />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </>
   );
 }
 

@@ -1,51 +1,29 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import logo from "../assets/logo/threads.png";
 import { Button } from "@mui/material";
+import FixedBottomNavigation from "../shared/FixedBottomNavigation";
 
 const Landing = () => {
   return (
-    <div
-      style={{
-        height: "100vh",
-        backgroundColor: "white",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }}>
-      <img
-        src={logo}
-        alt="threads-logo"
-        style={{ width: "30vh", height: "30vh", marginBottom: "5rem" }}
-      />
-      <div
+    <>
+      <h1
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          backgroundColor: "white",
+          zIndex: "999",
+          margin: "0 10px 5px",
+          height: "50px",
+          width: "100vw",
+          position: "fixed",
+          top: "0",
         }}>
-        <Link to="/login">
-          <Button
-            variant="outlined"
-            sx={{
-              borderColor: "black",
-              color: "#8d99ae",
-              width: "50vw",
-              marginBottom: "2rem",
-            }}>
-            Login
-          </Button>
-        </Link>
-        <Link to="/signup">
-          <Button
-            variant="outlined"
-            sx={{ borderColor: "black", color: "#8d99ae", width: "50vw" }}>
-            Signup
-          </Button>
-        </Link>
+        Threads
+      </h1>
+      <div style={{ marginTop: "60px", marginBottom: "80px"}}>
+        <Outlet />
       </div>
-    </div>
+      <FixedBottomNavigation />
+    </>
   );
 };
 

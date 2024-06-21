@@ -18,8 +18,6 @@ export default function FixedBottomNavigation() {
   }, []);
 
   const [value, setValue] = React.useState("recents");
-  const blacklistedRoutes = ["/login", "/signup"];
-  const path = window.location.pathname;
 
   if (!isMounted) {
     // Render an empty component or loading state while waiting for the client-side render
@@ -31,19 +29,19 @@ export default function FixedBottomNavigation() {
       sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }}
       elevation={3}>
       <BottomNavigation sx={{ width: "100%" }} value={value}>
-        <Link to="/feed">
+        <Link to="/user/feed">
           <BottomNavigationAction label="Home" icon={<HomeIcon />} />
         </Link>
-        <Link to="/search">
+        <Link to="/user/search">
           <BottomNavigationAction label="Search" icon={<SearchIcon />} />
         </Link>
-        <Link to="/post">
+        <Link to="/user/post">
           <BottomNavigationAction label="Post" icon={<EditNoteIcon />} />
         </Link>
-        <Link to="/likes">
+        <Link to="/user/likes">
           <BottomNavigationAction label="Likes" icon={<FavoriteBorderIcon />} />
         </Link>
-        <Link to="/profile">
+        <Link to="/user/profile">
           <BottomNavigationAction label="Profile" icon={<AccountBoxIcon />} />
         </Link>
       </BottomNavigation>

@@ -15,14 +15,14 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("inside handlesubmit");
-    try {
-      await login({ email, password });
-      navigate("/feed")
-      // window.location.href = "/feed";
-    } catch (error: any) {
-      console.error("Failed to login:", error.message);
-    }
+    login({ email, password })
+      .then((res: string) => {
+        localStorage.setItem("token", res);
+        navigate("/user/feed");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
   return (
     <form
@@ -36,14 +36,11 @@ const Login = () => {
         flexDirection: "column",
       }}>
       <div style={{ position: "fixed", top: "1rem", left: "1rem" }}>
-        <Link to="/">
-          <ArrowBackIosIcon sx={{ color: "black" }} />
-        </Link>
       </div>
       <img
         src={logo}
         alt="threads-logo"
-        style={{ width: "30vh", height: "30vh", marginBottom: "5rem" }}
+        style={{ width: "30vh", height: "30vh", marginBottom: "1rem" }}
       />
       <div
         style={{
@@ -74,13 +71,17 @@ const Login = () => {
         variant="contained"
         sx={{
           position: "fixed",
-          bottom: "3rem",
+          bottom: "4rem",
           color: "white",
           backgroundColor: "black",
           width: "50vw",
         }}>
         Login
       </Button>
+
+      <p style={{ position: "fixed", bottom: "0.5rem", color: "#adb5bd" }}>
+        New to threads? <Link to={"/signup"}>Signup</Link>
+      </p>
     </form>
   );
 };

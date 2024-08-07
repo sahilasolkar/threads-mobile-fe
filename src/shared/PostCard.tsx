@@ -39,13 +39,31 @@ const PostCard = ({
       id: string;
     };
   };
+  type Comment = {
+    __typename: string;
+    id: string;
+    content: string;
+    user: {
+      __typename: string;
+      id: string;
+      firstName: string;
+    };
+    createdAt: string;
+  };
+  const [isCommentToggled, setIsCommentToggled] = React.useState(false);
   const [state, setState] = React.useState({
     bottom: false,
   });
   const [postId, setPostId] = React.useState("");
   const [userComment, setUserComment] = React.useState("");
-  const [commentData, setCommentData] = React.useState([
-    { id: "", user: { firstName: "" }, content: "", createdAt: "" },
+  const [commentData, setCommentData] = React.useState<Comment[]>([
+    {
+      __typename: "",
+      id: "",
+      user: { firstName: "", __typename: "", id: "" },
+      content: "",
+      createdAt: "",
+    },
   ]);
   const [isLiked, setIsLiked] = React.useState(false);
   const [commentId, setCommentId] = React.useState("");
@@ -53,6 +71,7 @@ const PostCard = ({
 
   useEffect(() => {
     setLikes();
+    setComments(id);
   }, []);
 
   const isLikedByMe = (likeData: any) => {
@@ -114,33 +133,37 @@ const PostCard = ({
     }
   };
 
-  const fetchComments = async (postId: string) => {
-    try {
-      const res = await getCommentByPostId({ postId });
-      setCommentData(res);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const onHandleComments = () => {
-    fetchComments(postId);
-    toggleDrawer("bottom", true);
+  const setComments = (postId: any) => {
+    getCommentByPostId({ postId })
+      .then((res) => {
+        setCommentData(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const commentObj = {
+      __typename: "Comment",
+      id: "tempId",
+      content: userComment,
+      user: {
+        __typename: "User",
+        id: userId,
+        firstName: userName,
+      },
+      createdAt: new Date().getTime(),
+    };
     createComment({ content: userComment, postId })
       .then((res) => {
+        setCommentData((previousCommentData: any) => [
+          ...previousCommentData,
+          commentObj,
+        ]);
         setCommentId(res?.id);
         setUserComment("");
-        getCommentByPostId({ postId })
-          .then((res) => {
-            setCommentData(res);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
       })
       .catch((e: any) => {
         console.log(e);
@@ -150,13 +173,16 @@ const PostCard = ({
   const toggleDrawer =
     (anchor: "bottom", open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
-      getCommentByPostId({ postId })
-        .then((res) => {
-          setCommentData(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      if (!isCommentToggled) {
+        getCommentByPostId({ postId })
+          .then((res) => {
+            setCommentData(res);
+            setIsCommentToggled(true);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
 
       if (
         event &&
@@ -301,7 +327,7 @@ const PostCard = ({
         <div
           className="replies-and-comments"
           style={{ color: "#afafaf", fontSize: "14px" }}>
-          {comment?.length} replies . {likeData?.length} likes
+          {commentData?.length} replies . {likeData?.length} likes
         </div>
       </div>
     </div>

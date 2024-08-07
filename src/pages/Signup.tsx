@@ -110,7 +110,7 @@ const Signup = () => {
                 backgroundColor: "black",
                 width: "50vw",
               }}>
-              Login
+              Signup
             </Button>
           </div>
         </div>
@@ -124,7 +124,7 @@ const Signup = () => {
           flexDirection: "column",
         }}>
         <p style={{ color: "#adb5bd" }}>
-          Already have an acount? <Link to={"/login"}>Login</Link>
+          Already have an acount? <Link to={"/"}>Login</Link>
         </p>
       </div>
     </div>

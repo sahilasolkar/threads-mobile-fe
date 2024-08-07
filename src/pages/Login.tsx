@@ -35,8 +35,7 @@ const Login = () => {
         justifyContent: "center",
         flexDirection: "column",
       }}>
-      <div style={{ position: "fixed", top: "1rem", left: "1rem" }}>
-      </div>
+      <div style={{ position: "fixed", top: "1rem", left: "1rem" }}></div>
       <img
         src={logo}
         alt="threads-logo"

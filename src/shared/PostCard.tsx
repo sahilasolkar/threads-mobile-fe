@@ -1,17 +1,26 @@
 import React, { useEffect, useRef } from "react";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Box, Button, SwipeableDrawer, TextField } from "@mui/material";
-import { createComment, getCommentByPostId } from "../services/userService";
+import {
+  createComment,
+  getCommentByPostId,
+  getLikesByPostId,
+  likePostById,
+  unlikePostById,
+} from "../services/userService";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
 const PostCard = ({
+  userId,
   id,
   userName,
   content,
   createdAt,
   comment,
 }: {
+  userId: string;
   id: string;
   userName: string;
   content: string;
@@ -23,21 +32,115 @@ const PostCard = ({
     user: { id: string; firstName: string };
   }[];
 }) => {
+  type Like = {
+    __typename: string;
+    user: {
+      __typename: string;
+      id: string;
+    };
+  };
   const [state, setState] = React.useState({
     bottom: false,
   });
   const [postId, setPostId] = React.useState("");
   const [userComment, setUserComment] = React.useState("");
+  const [commentData, setCommentData] = React.useState([
+    { id: "", user: { firstName: "" }, content: "", createdAt: "" },
+  ]);
+  const [isLiked, setIsLiked] = React.useState(false);
+  const [commentId, setCommentId] = React.useState("");
+  const [likeData, setLikeData] = React.useState<Like[]>([]);
 
   useEffect(() => {
-    setPostId(id);
+    setLikes();
   }, []);
+
+  const isLikedByMe = (likeData: any) => {
+    likeData.forEach((like: any) => {
+      if (like.user.id === userId) {
+        setIsLiked(true);
+      }
+    });
+  };
+
+  const likePost = () => {
+    const likeObj = {
+      __typename: "Like",
+      user: {
+        __typename: "User",
+        id: userId,
+      },
+    };
+    if (!isLiked) {
+      setLikeData((prevLikeData) => [...prevLikeData, likeObj]);
+      likePostById({ postId })
+        .then((res) => {
+          setIsLiked(true);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const unlikePost = () => {
+    if (isLiked) {
+      unlikePostById({ postId })
+        .then((res) => {
+          if (res) {
+            if (likeData.length) {
+              const filteredLikeData = likeData.filter(
+                (like: any) => like.user.id !== userId
+              );
+              setLikeData(filteredLikeData);
+            }
+            setIsLiked(false);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const setLikes = async () => {
+    setPostId(id);
+    try {
+      const res = await getLikesByPostId({ postId: id });
+      setLikeData(res);
+      isLikedByMe(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const fetchComments = async (postId: string) => {
+    try {
+      const res = await getCommentByPostId({ postId });
+      setCommentData(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onHandleComments = () => {
+    fetchComments(postId);
+    toggleDrawer("bottom", true);
+  };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     createComment({ content: userComment, postId })
       .then((res) => {
-        console.log(res);
+        setCommentId(res?.id);
+        setUserComment("");
+        getCommentByPostId({ postId })
+          .then((res) => {
+            setCommentData(res);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
       })
       .catch((e: any) => {
         console.log(e);
@@ -47,10 +150,9 @@ const PostCard = ({
   const toggleDrawer =
     (anchor: "bottom", open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
-      // getCommentByPostId
       getCommentByPostId({ postId })
         .then((res) => {
-          console.log(res);
+          setCommentData(res);
         })
         .catch((e) => {
           console.log(e);
@@ -68,15 +170,7 @@ const PostCard = ({
       setState({ ...state, [anchor]: open });
     };
 
-  const list = (
-    anchor: "bottom",
-    data?: {
-      id: string;
-      content?: string;
-      createdAt?: string;
-      user?: { id?: string; firstName?: string };
-    }[]
-  ) => (
+  const list = (anchor: "bottom") => (
     <Box
       className="testclass"
       sx={{
@@ -87,7 +181,7 @@ const PostCard = ({
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}>
-      {data?.map((comment) => (
+      {commentData?.map((comment) => (
         <div
           key={comment.id}
           style={{ display: "flex", gap: "0.5rem", padding: "10px" }}>
@@ -171,12 +265,18 @@ const PostCard = ({
             justifyContent: "space-between",
           }}>
           <h4 style={{ marginTop: "10px" }}>{userName}</h4>
-          <p>{createdAt}</p>
+          <p style={{ fontSize: "12px", color: "#afafaf" }}>{createdAt}</p>
         </div>
         <p>{content}</p>
 
         <div style={{ display: "flex", gap: "10px" }}>
-          <FavoriteBorderIcon />
+          {isLiked && (
+            <FavoriteIcon
+              onClick={unlikePost}
+              sx={{ border: "black", color: "red" }}
+            />
+          )}
+          {!isLiked && <FavoriteBorderOutlinedIcon onClick={likePost} />}
           <div>
             <div onClick={toggleDrawer("bottom", true)}>
               <ChatBubbleOutlineIcon />
@@ -192,10 +292,16 @@ const PostCard = ({
                 open={state.bottom}
                 onClose={toggleDrawer("bottom", false)}
                 onOpen={toggleDrawer("bottom", true)}>
-                {list("bottom", comment)}
+                {list("bottom")}
               </SwipeableDrawer>
             </div>
           </div>
+        </div>
+
+        <div
+          className="replies-and-comments"
+          style={{ color: "#afafaf", fontSize: "14px" }}>
+          {comment?.length} replies . {likeData?.length} likes
         </div>
       </div>
     </div>

@@ -35,6 +35,26 @@ export const SIGNUP_MUTATION = gql`
   }
 `;
 
+export const GET_CURRENT_LOGGEDIN_USER = gql`
+  query GetCurrentLoggedInUser {
+    getCurrentLoggedInUser {
+      id
+    }
+  }
+`;
+
+export const getCurrentLoggedInUser = async (token: String) => {
+  try {
+    const response = await client.query({
+      query: GET_CURRENT_LOGGEDIN_USER,
+      variables: token,
+    });
+    return response.data.getCurrentLoggedInUser;
+  } catch (error: any) {
+    throw new Error(error.message || "Login failed");
+  }
+};
+
 export const login = async (data: LoginData) => {
   try {
     const response = await client.query({

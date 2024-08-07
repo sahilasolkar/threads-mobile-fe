@@ -20,7 +20,6 @@ const Feed = () => {
       });
 
     const token = localStorage.getItem("token");
-    console.log(token);
     getCurrentLoggedInUser(token || "").then((res) => {
       setUserId(res.id);
     });

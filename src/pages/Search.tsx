@@ -33,7 +33,6 @@ const Search = () => {
     try {
       const res = await getAllUsers({ limit: 10, offset: 0 });
       setAllUsers(res);
-      console.log(res);
       setDisplayUsers(res);
     } catch (e) {
       console.log(e);
@@ -42,16 +41,8 @@ const Search = () => {
 
   const setFollowing = async () => {
     try {
-      let tempFollowerList: string[];
       const res = await getFollowing();
       setFollowingUsers(res);
-      console.log(res);
-      // res.forEach((element: any) => {
-      //   tempFollowerList.push(element.id);
-      // });
-      // users.forEach((element: any) => {
-      //   element.isFollowing = tempFollowerList.includes(element.id);
-      // });
     } catch (e) {
       console.log(e);
     }

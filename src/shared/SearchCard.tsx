@@ -31,7 +31,6 @@ const SearchCard: React.FC<SearchCardProps> = ({
   const handleUnfollowUser = () => {
     unfollowUser({ followeeId: id })
       .then((res) => {
-        console.log(res);
         setFollowingUsers((prev: any) => [
           ...prev.filter((user: any) => user.id != id),
         ]);

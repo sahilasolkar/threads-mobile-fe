@@ -272,13 +272,14 @@ const PostCard = ({
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
           flexDirection: "column",
+          gap: "0.5rem",
+          marginTop: "0.5rem",
         }}>
         <AccountCircleIcon sx={{ height: "30px", width: "30px" }} />
         <div
           style={{
-            height: "60%",
+            height: "85%",
             width: "2px",
             backgroundColor: "#ced4da",
           }}></div>
@@ -293,7 +294,7 @@ const PostCard = ({
           <h4 style={{ marginTop: "10px" }}>{userName}</h4>
           <p style={{ fontSize: "12px", color: "#afafaf" }}>{createdAt}</p>
         </div>
-        <p>{content}</p>
+        <p style={{ marginTop: "0" }}>{content}</p>
 
         <div style={{ display: "flex", gap: "10px" }}>
           {isLiked && (

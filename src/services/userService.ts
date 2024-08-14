@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import client from "../utils/apiClient";
+import { responsePathAsArray } from "graphql";
 
 interface CreateComment {
   content: string;
@@ -18,6 +19,40 @@ interface getAllUsers {
   limit: number;
   offset: number;
 }
+
+interface followUser {
+  followeeId: string;
+}
+
+export const UNFOLLOW_USER = gql`
+  mutation UnfollowUser($followeeId: ID!) {
+    unfollowUser(followeeId: $followeeId)
+  }
+`;
+export const FOLLOW_USER = gql`
+  mutation FollowUser($followeeId: ID!) {
+    followUser(followeeId: $followeeId) {
+      id
+      follower {
+        id
+        firstName
+      }
+      followee {
+        id
+        firstName
+      }
+    }
+  }
+`;
+
+export const GET_FOLLOWING = gql`
+  query GetFollowing {
+    getFollowing {
+      id
+      firstName
+    }
+  }
+`;
 
 export const GET_FEED_QUERY = gql`
   query GetFeed {
@@ -196,5 +231,40 @@ export const getAllUsers = async (data: getAllUsers) => {
     return response.data.getUsers;
   } catch (error: any) {
     throw new Error(error.message || "couldn't fetch users");
+  }
+};
+
+export const followUser = async (data: followUser) => {
+  try {
+    const reponse = await client.mutate({
+      mutation: FOLLOW_USER,
+      variables: data,
+    });
+    return reponse.data.followUser;
+  } catch (error: any) {
+    throw new Error(error.message || "couldn't follow user");
+  }
+};
+
+export const unfollowUser = async (data: followUser) => {
+  try {
+    const reponse = await client.mutate({
+      mutation: UNFOLLOW_USER,
+      variables: data,
+    });
+    return reponse.data.unfollowUser;
+  } catch (error: any) {
+    throw new Error(error.message || "couldn't follow user");
+  }
+};
+
+export const getFollowing = async () => {
+  try {
+    const response = await client.query({
+      query: GET_FOLLOWING,
+    });
+    return response.data.getFollowing;
+  } catch (error: any) {
+    throw new Error(error.message || "couldn't get following list");
   }
 };

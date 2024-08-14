@@ -14,6 +14,11 @@ interface getCommentByPostId {
   postId: string;
 }
 
+interface getAllUsers {
+  limit: number;
+  offset: number;
+}
+
 export const GET_FEED_QUERY = gql`
   query GetFeed {
     getFeed {
@@ -97,6 +102,20 @@ export const CREATE_COMMENT_MUTATION = gql`
   }
 `;
 
+export const GET_ALL_USERS = gql`
+  query GetUsers {
+    getUsers {
+      id
+      firstName
+      email
+      lastName
+      followers {
+        id
+      }
+    }
+  }
+`;
+
 export const likePostById = async (data: LikePost) => {
   try {
     const response = await client.mutate({
@@ -165,5 +184,17 @@ export const getLikesByPostId = async (data: getCommentByPostId) => {
     return response.data.getLikesByPostId;
   } catch (error: any) {
     throw new Error(error.message || "Couldn't fetch likes");
+  }
+};
+
+export const getAllUsers = async (data: getAllUsers) => {
+  try {
+    const response = await client.query({
+      query: GET_ALL_USERS,
+      variables: data,
+    });
+    return response.data.getUsers;
+  } catch (error: any) {
+    throw new Error(error.message || "couldn't fetch users");
   }
 };

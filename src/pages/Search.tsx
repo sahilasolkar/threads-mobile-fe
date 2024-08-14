@@ -2,20 +2,31 @@ import React, { useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import SearchCard from "../shared/SearchCard";
 import Divider from "@mui/material/Divider";
-import { getAllUsers } from "../services/userService";
+import { getAllUsers, getFollowing } from "../services/userService";
 import { Autocomplete, TextField } from "@mui/material";
 
 const Search = () => {
   const [users, setAllUsers] = React.useState([
-    { firstName: "", lastName: "", email: "", id: "", followers: [{ id: "" }] },
+    {
+      firstName: "",
+      lastName: "",
+      email: "",
+      id: "",
+      followers: [{ id: "" }],
+      isFollowing: false,
+    },
   ]);
   const [displayUsers, setDisplayUsers] = React.useState([
     { firstName: "", lastName: "", email: "", id: "", followers: [{ id: "" }] },
   ]);
   const [input, setInput] = React.useState("");
+  const [followingUsers, setFollowingUsers] = React.useState([
+    { id: "", firstName: "" },
+  ]);
 
   useEffect(() => {
     setUsers();
+    setFollowing();
   }, []);
 
   const setUsers = async () => {
@@ -23,6 +34,15 @@ const Search = () => {
       const res = await getAllUsers({ limit: 10, offset: 0 });
       setAllUsers(res);
       setDisplayUsers(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const setFollowing = async () => {
+    try {
+      const res = await getFollowing();
+      setFollowingUsers(res);
     } catch (e) {
       console.log(e);
     }
@@ -88,6 +108,9 @@ const Search = () => {
             key={user.id}
             style={{ display: "flex", flexDirection: "column" }}>
             <SearchCard
+              setFollowingUsers={setFollowingUsers}
+              isFollowing={!!followingUsers.find((ele) => ele.id === user.id)}
+              id={user.id}
               name={user.firstName}
               username={user.email}
               followers={user.followers.length}></SearchCard>

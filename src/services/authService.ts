@@ -39,6 +39,7 @@ export const GET_CURRENT_LOGGEDIN_USER = gql`
   query GetCurrentLoggedInUser {
     getCurrentLoggedInUser {
       id
+      firstName
     }
   }
 `;

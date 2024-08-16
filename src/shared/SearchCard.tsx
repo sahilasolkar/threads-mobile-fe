@@ -1,4 +1,3 @@
-import { handleError } from "@apollo/client/link/http/parseAndCheckHttpResponse";
 import { AccountCircle } from "@mui/icons-material";
 import React from "react";
 import { followUser, unfollowUser } from "../services/userService";

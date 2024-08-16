@@ -294,7 +294,7 @@ const PostCard = ({
           <h4 style={{ marginTop: "10px" }}>{userName}</h4>
           <p style={{ fontSize: "12px", color: "#afafaf" }}>{createdAt}</p>
         </div>
-        <p style={{ marginTop: "0" }}>{content}</p>
+        <p style={{ marginBottom: "10px" }}>{content}</p>
 
         <div style={{ display: "flex", gap: "10px" }}>
           {isLiked && (

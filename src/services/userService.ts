@@ -24,6 +24,11 @@ interface followUser {
   followeeId: string;
 }
 
+interface createPost {
+  content: string;
+  imageUrl: string;
+}
+
 export const UNFOLLOW_USER = gql`
   mutation UnfollowUser($followeeId: ID!) {
     unfollowUser(followeeId: $followeeId)
@@ -38,6 +43,21 @@ export const FOLLOW_USER = gql`
         firstName
       }
       followee {
+        id
+        firstName
+      }
+    }
+  }
+`;
+
+export const CREATE_POST = gql`
+  mutation CreatePost($content: String!, $imageUrl: String!) {
+    createPost(content: $content, imageUrl: $imageUrl) {
+      content
+      createdAt
+      id
+      imageURL
+      user {
         id
         firstName
       }
@@ -266,5 +286,17 @@ export const getFollowing = async () => {
     return response.data.getFollowing;
   } catch (error: any) {
     throw new Error(error.message || "couldn't get following list");
+  }
+};
+
+export const createNewPost = async (data: createPost) => {
+  try {
+    const response = await client.mutate({
+      mutation: CREATE_POST,
+      variables: data,
+    });
+    return response.data.createPost;
+  } catch (error: any) {
+    throw new Error(error.message || "couldn't create new post");
   }
 };

@@ -23,6 +23,7 @@ const Feed = () => {
     const token = localStorage.getItem("token");
     getCurrentLoggedInUser(token || "").then((res) => {
       setUserId(res.id);
+      localStorage.setItem("userName", res.firstName);
     });
   }, []);
 

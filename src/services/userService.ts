@@ -171,6 +171,34 @@ export const GET_ALL_USERS = gql`
   }
 `;
 
+export const GET_USER_POST = gql`
+  query GetPostById {
+    getPostById {
+      id
+      content
+      imageURL
+      comments {
+        content
+        id
+        user {
+          firstName
+          lastName
+        }
+        createdAt
+      }
+      likes {
+        id
+        user {
+          firstName
+          lastName
+          id
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
 export const likePostById = async (data: LikePost) => {
   try {
     const response = await client.mutate({
@@ -298,5 +326,16 @@ export const createNewPost = async (data: createPost) => {
     return response.data.createPost;
   } catch (error: any) {
     throw new Error(error.message || "couldn't create new post");
+  }
+};
+
+export const getUserPost = async () => {
+  try {
+    const response = await client.query({
+      query: GET_USER_POST,
+    });
+    return response.data.getPostById;
+  } catch (error: any) {
+    throw new Error(error.message || "couldn't fetch users Posts");
   }
 };

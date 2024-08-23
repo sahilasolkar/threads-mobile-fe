@@ -177,6 +177,10 @@ export const GET_USER_POST = gql`
       id
       content
       imageURL
+      user {
+        id,
+        firstName
+      }
       comments {
         content
         id

@@ -40,6 +40,7 @@ export const GET_CURRENT_LOGGEDIN_USER = gql`
     getCurrentLoggedInUser {
       id
       firstName
+      email
     }
   }
 `;
